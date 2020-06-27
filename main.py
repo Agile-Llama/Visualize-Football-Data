@@ -30,12 +30,13 @@ def FreeCompeitions():
     return compeitions_dataframe
 
 
+# Works well with 'FreeCompeitions"
 def FreeMatches(competitions):
     """
     Function to get all the free matches from StatsBomb free dataset.
 
     Args:
-        'competitions' given as a dataframe must contain 'competition_id' and 'season_id'
+        'competitions' (DataFrame) : Must contain 'competition_id' and 'season_id'
 
     Returns:
         matches_dataframe (DataFrame): Return a dataframe with all the Free Matches.
@@ -53,7 +54,27 @@ def FreeMatches(competitions):
         matches = json_normalize(raw_matches.json())
         matches_dataframe = matches_dataframe.append(matches, ignore_index=True, sort=False)
 
-        return matches_dataframe
+    return matches_dataframe
+
+
+def MatchEvents(match_id):
+    """
+    Function to get all the all the events from a Match
+
+    Args:
+        match_id (int) : id of the game to get the events of
+
+    Returns:
+        match_events_dataframe (DataFrame): Return a dataframe with all the Events from a Match.
+    """
+
+    events_url = stats_bomb_url + f"events/{match_id}.json"
+    raw_events_api = requests.get(url=events_url)
+    raw_events_api.encoding = 'utf-8'
+    events = pd.DataFrame(json_normalize(raw_events_api.json()))
+
+    events.loc[:, 'match_id'] = match_id
+    return events
 
 
 

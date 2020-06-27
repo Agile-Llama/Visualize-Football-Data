@@ -12,15 +12,33 @@ stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/d
 
 # Todo Get all the data which feature Barcalona from the statsbomb 'Matches'
 
+
+def FreeCompeitions():
+    """
+    Function to get all the Free Competitions from StatsBomb free dataset.
+
+    Returns:
+        compeitions_dataframe (dataframe): Return a DataFrame with all the Free Competitions.
+    """
+
+    competitions_url = stats_bomb_url + "competitions.json"
+    raw_competitions = requests.get(url=competitions_url)
+    raw_competitions.encoding = 'utf-8'
+    competitions = raw_competitions.json()
+
+    compeitions_dataframe = pd.DataFrame(competitions)
+    return compeitions_dataframe
+
+
 def FreeMatches(competitions):
     """
-    Function to get all the free matches from Stats bomb github free data.
+    Function to get all the free matches from StatsBomb free dataset.
 
     Args:
         'competitions' given as a dataframe must contain 'competition_id' and 'season_id'
 
     Returns:
-        matches_dataframe (DataFrame): Return a dataframe with all the Free Matches with 'competition_id' & 'season_id'
+        matches_dataframe (DataFrame): Return a dataframe with all the Free Matches.
     """
 
     matches_dataframe = pd.DataFrame()
@@ -36,4 +54,8 @@ def FreeMatches(competitions):
         matches_dataframe = matches_dataframe.append(matches, ignore_index=True, sort=False)
 
         return matches_dataframe
+
+
+
+
 

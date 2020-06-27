@@ -1,80 +1,69 @@
-# Using the API: https://github.com/statsbomb/statsbombpy
 # Stats from StatsBomb free datasets
 
+from data_functions import FreeCompetitions, FreeMatches
 import pandas as pd
-from pandas import json_normalize
-import json
-import requests
-from tqdm.auto import tqdm
 
-# Github root url for statsbomb data.
-stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
+# Refer to page 19 of Open events for guide on shots.
+# Types of shot:
+    # 61 / “Corner”
+    # 62 / “Free Kick” 
+    # 87 / “Open Play” 
+    # 88 / “Penalty” 
+    # 65 / “Kick Off”
 
-# Todo Get all the data which feature Barcalona from the statsbomb 'Matches'
+# Outcome of shot (shot.end_location)
+    # 96 / “Blocked”
+    # 97 / “Goal” 
+    # 98 / “OffT” 
+    # 99 / “Post”
+    # 100 / “Saved”
+    # 115 / “Saved Off T” 
+    # 116 / “Saved To Post”
 
-
-def FreeCompeitions():
-    """
-    Function to get all the Free Competitions from StatsBomb free dataset.
-
-    Returns:
-        compeitions_dataframe (dataframe): Return a DataFrame with all the Free Competitions.
-    """
-
-    competitions_url = stats_bomb_url + "competitions.json"
-    raw_competitions = requests.get(url=competitions_url)
-    raw_competitions.encoding = 'utf-8'
-    competitions = raw_competitions.json()
-
-    compeitions_dataframe = pd.DataFrame(competitions)
-    return compeitions_dataframe
+# Refer to page 18 and page 2 for info.
+# end_location Where the shot ended.
+    # can have x,y or x,y,z values.
 
 
-# Works well with 'FreeCompeitions"
-def FreeMatches(competitions):
-    """
-    Function to get all the free matches from StatsBomb free dataset.
+# Shot numbers which I care about currently are:
+    # 62 for free kicks.
+    # 88 for penalties
 
-    Args:
-        'competitions' (DataFrame) : Must contain 'competition_id' and 'season_id'
+# Full name
+messi_name = 'Lionel Andrés Messi Cuccittini'
 
-    Returns:
-        matches_dataframe (DataFrame): Return a dataframe with all the Free Matches.
-    """
+laliga_id = 11
 
-    matches_dataframe = pd.DataFrame()
+messi_csv_file = 'messi_events.csv'
 
-    for i in tqdm(range(len(competitions))):
-        comp_id = str(competitions['competition_id'][i])
-        season_id = str(competitions['season_id'][i])
-
-        matches_url = stats_bomb_url+f"matches/{comp_id}/{season_id}.json"
-
-        raw_matches = requests.get(url=matches_url)
-        matches = json_normalize(raw_matches.json())
-        matches_dataframe = matches_dataframe.append(matches, ignore_index=True, sort=False)
-
-    return matches_dataframe
+laliga_csv_file = 'laliga_events.csv'
 
 
-def MatchEvents(match_id):
-    """
-    Function to get all the all the events from a Match
+# Currently only concerned with Messi stats. 
+# Can expand later.
+def main():
+    # Load the csv file which has all the data pre processed
+    df_messi = pd.read_csv(messi_csv_file, index_col=0, low_memory=False)
 
-    Args:
-        match_id (int) : id of the game to get the events of
+    # Get all the goals that messi has scored. 
+    # goals_by_game = df_messi[(df_messi['shot.outcome.name'] == 'Goal') & (df_messi['player.name'] == messi_name)].groupby('match_id')['player.name'].count()
 
-    Returns:
-        match_events_dataframe (DataFrame): Return a dataframe with all the Events from a Match.
-    """
+    # Get all the pens scored.
+    pens_scored = df_messi[(df_messi['shot.type.name'] == 'Penalty') & (df_messi['player.name'] == messi_name) & (df_messi['shot.outcome.name'] == 'Goal')]
 
-    events_url = stats_bomb_url + f"events/{match_id}.json"
-    raw_events_api = requests.get(url=events_url)
-    raw_events_api.encoding = 'utf-8'
-    events = pd.DataFrame(json_normalize(raw_events_api.json()))
+    # All free kicks taken by Messi
+    all_free_kicks = df_messi[(df_messi['shot.type.name'] == 'Free Kick') & (df_messi['player.name'] == messi_name)]
 
-    events.loc[:, 'match_id'] = match_id
-    return events
+    free_kicks_blocked = all_free_kicks[(df_messi['shot.outcome.name'] == 'Blocked')]
+
+    pd.set_option('display.max_rows', df_messi.shape[0]+1)
+
+    print(free_kicks_blocked)
+
+
+
+if __name__ == '__main__':
+    main()
 
 
 

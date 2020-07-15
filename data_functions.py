@@ -1,4 +1,4 @@
-# Stats from StatsBomb free datasets
+# Stats from StatsBomb free datasets. Gets from github
 
 import pandas as pd
 from pandas import json_normalize
@@ -9,7 +9,9 @@ from tqdm.auto import tqdm
 # Github root url for statsbomb data.
 stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
 
-# Todo Get all the data which feature Barcalona from the statsbomb 'Matches'
+
+
+# Start with getting all the stats from statsbomb github. 
 
 
 def FreeCompetitions():
@@ -57,8 +59,7 @@ def FreeMatches(competitions):
 
 
 def get_match_free(match_id):
-    """
-    Function to get all the all the events from a Match
+    """Function to get all the all the events from a Match
 
     Args:
         match_id (int) : id of the game to get the events of
@@ -97,4 +98,46 @@ def StatsBombFreeEvents(matchesdf):
     return df
 
 
+def get_lineups(match_id):
+    """ Function which gets the lineup from a given match id.
+
+    Args:
+        match_id (int) : id of the game
+
+    Returns:
+        events (DataFrame): DataFrame with all events.
+
+    """
+
+    events_url = stats_bomb_url+"lineups/{match_id}.json"
+    events_api = requests.get(url=events_url)
+    events_api.encoding = 'utf-8'
+    events = pd.DataFrame(json_normalize(events_api.json(), 'lineup', ['team_id', 'team_name']))
+    
+    events.loc[:, 'match_id'] = match_id
+
+    return events
+
+
+def StatsBombFreelineups(matches_dataframe):
+    """Function to create DataFrame with events from match.
+
+        Args:
+            matches_dataframe (DataFrame): dataframe of matches. This must include 'match_id', 'competition_id', and 'season_id'.
+
+        Returns:
+            dataframe (DataFrame): DataFrame with all events from all matches.
+
+    """
+    res = []
+    for ind in matches_dataframe.index:
+        events = get_lineups(matches_dataframe[matches_dataframe.index == ind]['match_id'].values[0])
+        events.loc[:, 'competition_id'] = matches_dataframe[matches_dataframe.index == ind]['competition.competition_id'].values[0]
+        events.loc[:, 'season_id'] = matches_dataframe[matches_dataframe.index == ind]['season.season_id'].values[0]
+        res.append(events)
+    dataframe = pd.concat(res, sort=True)
+    return dataframe
+
+
+# Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 

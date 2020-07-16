@@ -7,6 +7,7 @@ import requests
 from tqdm.auto import tqdm
 
 import matplotlib.pyplot as plt
+from matplotlib.patches import Arc
 
 # Github root url for statsbomb data.
 stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
@@ -143,7 +144,7 @@ def StatsBombFreelineups(matches_dataframe):
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
 
-def draw(field_colour, line_colour):
+def draw_field(field_colour, line_colour):
 
     """
         Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdf)
@@ -153,7 +154,7 @@ def draw(field_colour, line_colour):
             line_colour (Color/Hex) : Colour of the lines on the field.
         
         Retuns:
-            Fill this in
+            ax (axes): Matplotlib axes.
 
     """
 
@@ -194,23 +195,52 @@ def draw(field_colour, line_colour):
     # Right 6-yard Box
     plt.plot([120, 114], [30, 30], color=line_colour, linewidth=linewidth)
     plt.plot([114, 114], [50, 30], color=line_colour, linewidth=linewidth)
-    plt.plot([120, 114], [50, 50], color=line_colour, linewidth=linewidth)
+    plt.plot([120, 114], [50, 50], color=line_colour, linewidth=linewidth)  
 
 
     # Adding colour Rectangles in boxes
-    rec1 = plt.Rectangle((87.5,20), 16,30,ls='-',color=field_colour, zorder=1,alpha=1)
-    rec2 = plt.Rectangle((0, 20), 16.5,30,ls='-',color=field_colour, zorder=1,alpha=1)
+    rectangle_1 = plt.Rectangle((87.5,20), 16,30,ls='-',color=field_colour, zorder=1,alpha=1)
+    rectangle_2 = plt.Rectangle((0, 20), 16.5,30,ls='-',color=field_colour, zorder=1,alpha=1)
 
     # Adding colour Pitch rectangle
-    rec3 = plt.Rectangle((0, 0), 120, 80,ls='-',color=field_colour, zorder=1,alpha=1)
+    rectangle_3 = plt.Rectangle((0, 0), 120, 80,ls='-',color=field_colour, zorder=1,alpha=1)
 
-    ax.add_artist(rec1)
-    ax.add_artist(rec2)
-    ax.add_artist(rec3)
+    # Prepare Circles
+    centre_circle = plt.Circle((x_max/2, y_max/2), 10, color=line_colour, fill=False, linewidth=linewidth)
+    centre_spot = plt.Circle((x_max/2, y_max/2), 0.9, color=line_colour, linewidth=linewidth)
 
+    left_penalty_spot = plt.Circle((12, 40), 0.71, color=line_colour)
+    right_penalty_spot = plt.Circle((108, 40), 0.71, color=line_colour)
 
-    
- 
-# draw_field("#195905","#faf0e6","h","full")
-draw(field_colour = "#195905", line_colour = "#faf0e6")
-plt.show()
+    # Prepare Arcs
+    left_arc = Arc((13, 40), height=16.2, width=16.2, angle=0, theta1=310, theta2=50, color=line_colour, linewidth=linewidth)
+    right_arc = Arc((107, 40), height=16.2, width=16.2, angle=0, theta1=130, theta2=230, color=line_colour, linewidth=linewidth)
+
+    # Due to layering must add rectangle_1,2 and 3 first before the lines. The lines go on the above layer.
+    ax.add_artist(rectangle_1)
+    ax.add_artist(rectangle_2)
+    ax.add_artist(rectangle_3)
+
+    # Draw Circles
+    ax.add_artist(centre_circle)
+    ax.add_artist(centre_spot)
+    ax.add_artist(left_penalty_spot)
+    ax.add_artist(right_penalty_spot)
+
+    # Draw Arcs
+    ax.add_artist(left_arc)
+    ax.add_artist(right_arc)
+
+    plt.xlim([-5, 125])
+    plt.ylim([-5, 85])
+
+    plt.axis('off')
+
+    # invert the axis so iut matches the sheet from statsbomb docs
+    ax.invert_yaxis()
+
+    return ax
+
+# Calling the draw_field function:
+# draw_field(field_colour = "#195905", line_colour = "#faf0e6")
+#plt.show()

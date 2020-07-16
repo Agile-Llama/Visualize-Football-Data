@@ -6,9 +6,10 @@ import json
 import requests
 from tqdm.auto import tqdm
 
+import matplotlib.pyplot as plt
+
 # Github root url for statsbomb data.
 stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
-
 
 
 # Start with getting all the stats from statsbomb github. 
@@ -141,3 +142,22 @@ def StatsBombFreelineups(matches_dataframe):
 
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
+
+def draw():
+
+    x_min = 0
+    x_max = 120
+    y_min = 0
+    y_max = 80
+
+    # Pitch Outline & Centre Line
+    plt.plot([x_min, y_min], [x_min, y_max], color="black")
+    plt.plot([x_min, x_max], [y_max, y_max], color="black")
+    plt.plot([x_max, x_max], [y_max, y_min], color="black")
+    plt.plot([x_max, y_min], [x_min, y_min], color="black")
+    plt.plot([x_max/2, x_max/2], [x_min, y_max], color="black")
+    
+ 
+# draw_field("#195905","#faf0e6","h","full")
+draw()
+plt.show()

@@ -9,6 +9,11 @@ from tqdm.auto import tqdm
 import matplotlib.pyplot as plt
 from matplotlib.patches import Arc
 
+import numpy as np
+from scipy.ndimage.filters import gaussian_filter
+
+from ast import literal_eval
+
 # Github root url for statsbomb data.
 stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
 
@@ -144,12 +149,13 @@ def StatsBombFreelineups(matches_dataframe):
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
 
-def draw_field(field_colour, line_colour):
+def draw_field(ax, heatmap=False ,field_colour= "#195905", line_colour= "#000000"):
 
     """
         Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdf)
     
         Args:
+            heatmap (Boolean) : Won't add background rectangles if heatmap = True
             field_colour (Color/Hex) : Colour for the field.
             line_colour (Color/Hex) : Colour of the lines on the field.
         
@@ -158,8 +164,9 @@ def draw_field(field_colour, line_colour):
 
     """
 
-    fig, ax = plt.subplots()
-    fig.set_size_inches(10, 6.5)
+    # Call these from the original place you want to create a pitch. Pass ax to the function.
+    # fig, ax = plt.subplots()
+    # fig.set_size_inches(10, 6.5)
 
     x_min = 0
     x_max = 120
@@ -216,10 +223,12 @@ def draw_field(field_colour, line_colour):
     left_arc = Arc((13, 40), height=16.2, width=16.2, angle=0, theta1=310, theta2=50, color=line_colour, linewidth=linewidth)
     right_arc = Arc((107, 40), height=16.2, width=16.2, angle=0, theta1=130, theta2=230, color=line_colour, linewidth=linewidth)
 
-    # Due to layering must add rectangle_1,2 and 3 first before the lines. The lines go on the above layer.
-    ax.add_artist(rectangle_1)
-    ax.add_artist(rectangle_2)
-    ax.add_artist(rectangle_3)
+
+    # If we are drawing a pitch for a heatmap we DON'T want to add the 'background' rectangles.
+    if not heatmap:
+        ax.add_artist(rectangle_1)
+        ax.add_artist(rectangle_2)
+        ax.add_artist(rectangle_3)
 
     # Draw Circles
     ax.add_artist(centre_circle)
@@ -241,6 +250,20 @@ def draw_field(field_colour, line_colour):
 
     return ax
 
-# Calling the draw_field function:
-# draw_field(field_colour = "#195905", line_colour = "#faf0e6")
-#plt.show()
+
+# Followed this guide https://numpy.org/doc/stable/reference/generated/numpy.histogram2d.html
+def create_heatmap(x, y, s, bins=1000):
+    """
+        Function to return a 'Heatmap' Place this on top of a football field.
+
+    """
+    heatmap, xedges, yedges = np.histogram2d(x, y, bins=bins)
+    heatmap = gaussian_filter(heatmap, sigma=s)
+
+    extent = [0, 120, 0, 80]
+    return heatmap.T, extent
+
+
+
+
+

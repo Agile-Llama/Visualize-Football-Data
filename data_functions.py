@@ -143,21 +143,74 @@ def StatsBombFreelineups(matches_dataframe):
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
 
-def draw():
+def draw(field_colour, line_colour):
+
+    """
+        Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdf)
+    
+        Args:
+            field_colour (Color/Hex) : Colour for the field.
+            line_colour (Color/Hex) : Colour of the lines on the field.
+        
+        Retuns:
+            Fill this in
+
+    """
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches(10, 6.5)
 
     x_min = 0
     x_max = 120
     y_min = 0
     y_max = 80
 
-    # Pitch Outline & Centre Line
-    plt.plot([x_min, y_min], [x_min, y_max], color="black")
-    plt.plot([x_min, x_max], [y_max, y_max], color="black")
-    plt.plot([x_max, x_max], [y_max, y_min], color="black")
-    plt.plot([x_max, y_min], [x_min, y_min], color="black")
-    plt.plot([x_max/2, x_max/2], [x_min, y_max], color="black")
+    linewidth = 2
+
+    # Outline of the Field.
+    plt.plot([x_min, y_min], [x_min, y_max], color=line_colour, linewidth=linewidth)
+    plt.plot([x_min, x_max], [y_max, y_max], color=line_colour, linewidth=linewidth)
+    plt.plot([x_max, x_max], [y_max, y_min], color=line_colour, linewidth=linewidth)
+    plt.plot([x_max, y_min], [x_min, y_min], color=line_colour, linewidth=linewidth)
+
+    # Centre line.
+    plt.plot([x_max/2, x_max/2], [x_min, y_max], color=line_colour, linewidth=linewidth)
+
+    # Left penalty area.
+    plt.plot([18, 18], [62, 18], color=line_colour, linewidth=linewidth)
+    plt.plot([0, 18], [62, 62], color=line_colour, linewidth=linewidth)
+    plt.plot([0, 18], [18, 18], color=line_colour, linewidth=linewidth)
+
+    # Right Penalty Area
+    plt.plot([120, 102], [62, 62], color=line_colour, linewidth=linewidth)
+    plt.plot([120, 102], [18, 18], color=line_colour, linewidth=linewidth)
+    plt.plot([102, 102], [18, 62], color=line_colour, linewidth=linewidth)
+
+    # Left 6-yard Box
+    plt.plot([6, 6], [30, 50], color=line_colour, linewidth=linewidth)
+    plt.plot([0, 6], [50, 50], color=line_colour, linewidth=linewidth)
+    plt.plot([0, 6], [30, 30], color=line_colour, linewidth=linewidth)
+
+    # Right 6-yard Box
+    plt.plot([120, 114], [30, 30], color=line_colour, linewidth=linewidth)
+    plt.plot([114, 114], [50, 30], color=line_colour, linewidth=linewidth)
+    plt.plot([120, 114], [50, 50], color=line_colour, linewidth=linewidth)
+
+
+    # Adding colour Rectangles in boxes
+    rec1 = plt.Rectangle((87.5,20), 16,30,ls='-',color=field_colour, zorder=1,alpha=1)
+    rec2 = plt.Rectangle((0, 20), 16.5,30,ls='-',color=field_colour, zorder=1,alpha=1)
+
+    # Adding colour Pitch rectangle
+    rec3 = plt.Rectangle((0, 0), 120, 80,ls='-',color=field_colour, zorder=1,alpha=1)
+
+    ax.add_artist(rec1)
+    ax.add_artist(rec2)
+    ax.add_artist(rec3)
+
+
     
  
 # draw_field("#195905","#faf0e6","h","full")
-draw()
+draw(field_colour = "#195905", line_colour = "#faf0e6")
 plt.show()

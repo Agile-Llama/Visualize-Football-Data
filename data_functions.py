@@ -85,24 +85,24 @@ def get_match_free(match_id):
 
 
 # Data from a list of matches (use get_matchFree)
-def StatsBombFreeEvents(matchesdf):
+def StatsBombFreeEvents(matchesdataframe):
     """Function to create DataFrame with events from match.
 
         Args:
-            matchesdf (DataFrame): dataframe of matches. Must have columns 'match_id', 'competition_id', and 'season_id'.
+            matchesdataframe (DataFrame): dataframe of matches. Must have columns 'match_id', 'competition_id', and 'season_id'.
     
         Returns:
-            df (DataFrame): DataFrame with all events from all matches.
+            dataframe (DataFrame): DataFrame with all events from all matches.
 
     """
     res = []
-    for ind in tqdm(matchesdf.index):
-        events = get_match_free(matchesdf[matchesdf.index == ind]['match_id'].values[0])
-        events.loc[:, 'competition_id'] = matchesdf[matchesdf.index == ind]['competition.competition_id'].values[0]
-        events.loc[:, 'season_id'] = matchesdf[matchesdf.index == ind]['season.season_id'].values[0]
+    for ind in tqdm(matchesdataframe.index):
+        events = get_match_free(matchesdataframe[matchesdataframe.index == ind]['match_id'].values[0])
+        events.loc[:, 'competition_id'] = matchesdataframe[matchesdataframe.index == ind]['competition.competition_id'].values[0]
+        events.loc[:, 'season_id'] = matchesdataframe[matchesdataframe.index == ind]['season.season_id'].values[0]
         res.append(events)
-    df = pd.concat(res, sort=True)
-    return df
+    dataframe = pd.concat(res, sort=True)
+    return dataframe
 
 
 def get_lineups(match_id):
@@ -146,13 +146,51 @@ def StatsBombFreelineups(matches_dataframe):
     return dataframe
 
 
+def minutes_played(dataframe, match_id, player_name, team_name):
+    """
+        Function that gets the minutes played (in a game) for a player.
+
+        Args:
+            dataframe (DataFrame): dataframe of events of games (created from Stastbomb open data).
+            match_id (int): id of the game.
+            player_name (String): player name to use
+            team_name (String): Name of the team to use.
+
+        Returns:
+            minutes_played (float) : Number of minutes played by a given player.
+
+    """
+
+    # Get the lineup for the match_id
+    lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) &(dataframe['team.name'] == team_name) & (dataframe['type.name'] == 'Starting XI')]['tactics.lineup'].values[0])
+
+    starting_lineup = [x['player']['name'] for x in lineup]
+    
+    first_half_duration = dataframe[(dataframe['match_id'] == match_id) & (dataframe['period'] == 1)]['time'].max()
+
+    second_half_duration = dataframe[(dataframe['match_id'] == match_id) & (dataframe['period'] == 2)]['time'].max() - 45
+
+    # Player started the game
+    if player_name in starting_lineup:
+        pass
+    else:
+        pass
+
+
+
+
+
+
+
+
+
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
 
 def draw_field(ax, heatmap=False ,field_colour= "#195905", line_colour= "#000000"):
 
     """
-        Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdf)
+        Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdataframe)
     
         Args:
             heatmap (Boolean) : Won't add background rectangles if heatmap = True
@@ -262,8 +300,5 @@ def create_heatmap(x, y, s, bins=1000):
 
     extent = [0, 120, 0, 80]
     return heatmap.T, extent
-
-
-
 
 

@@ -15,8 +15,15 @@ laliga_id = 11
 messi_csv_file = 'messi_events.csv'
 
 
-# Get the game from Lionel Messi with the lowest expected goals.
+
 def lowest_xg_game():
+    """
+        Function that gets the lowest Expected Goals game in Lionel Messi's career.
+        A heatmap is created and saved to the current working directory as 'messi_heatmap_lowest_xG.png'
+
+        Note, the game should be 2009/10 against Espanyol with the match id of 69213.
+    """
+    
     df_messi = pd.read_csv(messi_csv_file, index_col=0, low_memory=False)
 
     # Get all of the match ID's of games which feature Messi.
@@ -37,7 +44,7 @@ def lowest_xg_game():
     # Messi heatmap to compare to.
     fig, ax = plt.subplots()
     fig.set_size_inches(12, 8)
-    draw_field(ax)
+    draw_field(ax, heatmap=True)
 
     data_from_lowest_xg_game = df_messi[(df_messi['match_id'] == match_id_lowest_xG_game) & (df_messi['player.name'] == messi_name) & (~df_messi['location_x'].isnull()) & (~df_messi['location_y'].isnull())]
 
@@ -51,7 +58,7 @@ def lowest_xg_game():
 
     ax.annotate("Direction of play for Barcelona", xy=(5, 83), xytext=(60, 84), arrowprops=dict(arrowstyle="->", edgecolor='k', linewidth=1.5), color='k')
 
-    fig.savefig('messi_heatmap.png')
+    fig.savefig('messi_heatmap_lowest_xG.png')
 
 
 if __name__ == '__main__':

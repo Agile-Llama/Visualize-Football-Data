@@ -149,6 +149,8 @@ def StatsBombFreelineups(matches_dataframe):
 def minutes_played(dataframe, match_id, player_name, team_name):
     """
         Function that gets the minutes played (in a game) for a player.
+        Checks if player was a starter or a substitute. 
+        Checks if the player recieved a card which reduced playing time.
 
         Args:
             dataframe (DataFrame): dataframe of events of games (created from Stastbomb open data).
@@ -162,7 +164,8 @@ def minutes_played(dataframe, match_id, player_name, team_name):
     """
 
     # Get the lineup for the match_id
-    lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) &(dataframe['team.name'] == team_name) & (dataframe['type.name'] == 'Starting XI')]['tactics.lineup'].values[0])
+    lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) &(dataframe['team.name'] == team_name) 
+        & (dataframe['type.name'] == 'Starting XI')]['tactics.lineup'].values[0])
 
     starting_lineup = [x['player']['name'] for x in lineup]
     
@@ -172,17 +175,47 @@ def minutes_played(dataframe, match_id, player_name, team_name):
 
     # Player started the game
     if player_name in starting_lineup:
-        pass
+
+        # If the player started the game. Give them the full duration of the game. Take into account substitions later.
+        minutes_played = first_half_duration + second_half_duration
+
     else:
-        pass
+        # Check to see if the player entered the game through a substitution.
+        subbed_in = dataframe[(dataframe['match_id'] == match_id) &
+            (dataframe['team.name'] == team_name) &(dataframe['type.name'] == 'Substitution') &
+            (dataframe['substitution.replacement.name'] == player_name)][['time', 'period']]
 
+        # Player was subbed into the game. Calculate the time played.
+        if not subbed_in['time'].empty:
+            minutes_played = int(subbed_in['period'] == 1)*(first_half_duration - subbed_in['time'].values[0] + second_half_duration)
+            + int(subbed_in['period'] == 2)*(second_half_duration + 45 - subbed_in['time'].values[0])
 
+        else:
+            # Player didn't enter the game so minutes played is 0.
+            minutes_played = 0
+        
+    # Check if the player (checking starters here) was substituted during the game.
+    was_subbed = dataframe[(dataframe['match_id'] == match_id) & (dataframe['team.name'] == team_name) & 
+        (dataframe['player.name'] == player_name) & (dataframe['type.name'] == 'Substitution')][['time', 'period']]
+    
+    # The player was subbed. (Time isn't empty). Reduce the minutes played by the player.
+    if not was_subbed['time'].empty:
+        minutes_played = minutes_played - int(was_subbed['period'].values == 1)*(second_half_duration + first_half_duration - was_subbed['time'].values[0]
+            ) + int(was_subbed['period'].values == 2)*(second_half_duration + 45 - was_subbed['time'].values[0])
+    
 
+    # Check if a player recieved a red/yellow card. 
+    was_carded = dataframe[(dataframe['match_id'] == match_id) & (dataframe['team.name'] == team_name) &(dataframe['player.name'] == player_name) 
+        & ((dataframe['bad_behaviour.card.name' ].isin(['Red Card', 'Second Yellow'])) 
+        | (dataframe['foul_committed.card.name'].isin(['Red Card', 'Second Yellow'])))][['time', 'period']]
 
-
-
-
-
+    # Player recieved a card, so we reduce the minutes_played in the game.
+    if not was_carded['time'].empty:
+        minutes_played = minutes_played - int(was_carded['period'].values == 1 )*(second_half_duration + first_half_duration - was_carded['time'].values[0]
+            ) + int(was_carded['period'].values == 2)*(second_half_duration + 45 - was_carded['time'].values[0])
+    
+    # Could check for minutes played > 0 incase of divide by 0 errors.
+    return minutes_played
 
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
@@ -190,7 +223,7 @@ def minutes_played(dataframe, match_id, player_name, team_name):
 def draw_field(ax, heatmap=False ,field_colour= "#195905", line_colour= "#000000"):
 
     """
-        Function to draw a football field with the dimensions from statsbomb docs (See map 22 /Docs/OpenDataEvents.pdataframe)
+        Function to draw a football field with the dimensions from statsbomb docs (See page 22 opendata/docs/OpenDataEvents.pdataframe)
     
         Args:
             heatmap (Boolean) : Won't add background rectangles if heatmap = True

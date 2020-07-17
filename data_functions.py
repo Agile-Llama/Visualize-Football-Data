@@ -217,6 +217,54 @@ def minutes_played(dataframe, match_id, player_name, team_name):
     # Could check for minutes played > 0 incase of divide by 0 errors.
     return minutes_played
 
+
+def compute_defensive_actions(dataframe, match_id, x_min=0.0, x_max=120.0, y_min=0.0, y_max=80.0):
+    """
+        Function to calculate the defensive actions for each time in a game. 
+
+        Args:
+            dataframe (DataFrame): dataframe with Statsbomb event data.
+            match_id (int): match id of the game we want to calculate the metric on.
+            x_min (float): min on the location_x. 
+            x_max (float): max on the location_x. 
+            y_min (float): min on the location_y. 
+            y_max (float): max on the location_y. 
+
+        Returns:
+            res (dict): number of defensive actions for each team in a dict with keys equal to team names.
+    """
+
+    # Get all unique team names
+    all_teams = dataframe[dataframe['match_id'] == match_id]['team.name'].unique()
+
+    # Filter dataframe for the specific match_id and area of the pitch
+    dataframe_match = dataframe[(dataframe['match_id'] == match_id) & (dataframe['location_x'] >= x_min) & (dataframe['location_x'] <= x_max) &
+        (dataframe['location_y'] >= y_min) & (dataframe['location_y'] <= y_max)].reset_index(drop=True)
+
+    defensive_events = ['Block', 'Clearance', 'Foul Commited', 'Interception', 'Duel', 'Pressure', 'Shield']
+
+    res = {}
+
+    for team in all_teams:
+        # Team number of defensive actions
+        defensive_actions = len(dataframe_match[(dataframe_match['team.name'] == team) & (dataframe_match['type.name'].isin(defensive_events))])
+
+        # Adding blocked shot (shot from opposition team) in the count
+        defensive_actions += len(dataframe_match[(dataframe_match['team.name'] != team) & (dataframe_match['type.name'] == 'Shot') & (dataframe_match['shot.outcome.name'] == 'Blocked')])
+
+        # Adding "defensive" pass: Pass with type Interception and Recovery
+        defensive_actions += len(dataframe_match[(dataframe_match['team.name'] == team) & (dataframe_match['type.name'] == 'Pass') & 
+            (dataframe_match['pass.type.name'].isin(['Interception', 'Recovery']))])
+
+        defensive_actions += len(dataframe_match[(dataframe_match['team.name'] != team) &(dataframe_match['type.name'] == 'Dispossessed')])
+        
+        res[team] = defensive_actions
+
+    return res
+
+
+
+
 # Next set of functions will be to do with drawing the football pitch and other things like heatmaps, passmaps etc...
 
 

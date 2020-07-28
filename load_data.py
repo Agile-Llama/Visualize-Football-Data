@@ -34,6 +34,24 @@ def all_messi_events():
     # Get all the events of a specific player.
     final = laliga_events[(laliga_events['player.name'] == 'Lionel Andrés Messi Cuccittini')]
 
+    # Below explained. Statsbomb data for the below stats come as a pair ie ([55, 65]) this breaks that one up into 2 for easier reading in future.
+
+    # Create column for end_location x and y. For PASSING.
+    final.loc[final['type.name'] == 'Pass','end_location_x'] = [x[0] for x in final[final['type.name'] == 'Pass']['pass.end_location']]
+    final.loc[final['type.name'] == 'Pass', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Pass']['pass.end_location']]
+
+    # Create column for end_location x and y. For CARRY.
+    final.loc[final['type.name'] == 'Carry', 'end_location_x'] = [x[0] for x in final[final['type.name'] == 'Carry' ]['carry.end_location']]
+    final.loc[final['type.name'] == 'Carry', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Carry']['carry.end_location']]
+
+    # Create column for end_location x and y. For SHOT.
+    final.loc[final['type.name'] == 'Shot', 'end_location_x'] = [x[0] for x in final[final['type.name'] == 'Shot' ]['shot.end_location']]
+    final.loc[final['type.name'] == 'Shot', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Shot']['shot.end_location']]
+
+    # Drop those column now that we have moved the data elsewhere.
+    final.drop(['location', 'pass.end_location','carry.end_location', 'shot.end_location'], axis=1, inplace=True)
+
+
     final.to_csv('messi_events.csv')
         
     

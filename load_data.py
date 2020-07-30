@@ -7,6 +7,7 @@ pd.set_option('display.max_rows', None)
 
 free_comp = FreeCompetitions()
 
+# kinda redundant for the moment.
 def all_la_liga_data():
     """
         Function to get all the events from all laliga seasons in free competitions.
@@ -16,42 +17,49 @@ def all_la_liga_data():
 
     # Running this will take about 8-10mins
     laliga_events = StatsBombFreeEvents(laliga_matches)
-
+    
     # Writing to csv file takes about 15mins (Doing all the operations above)
     laliga_events.to_csv('laliga_events.csv')
 
 
-def all_messi_events():
+def all_events():
     """
-        Function to get all the events which feature the player Lionel Andrés Messi Cuccittini
-        Writes these events to a csv file called 'messi_events.csv'
+        Function to get all the events from all laliga seasons.
+        Writes these events to a csv file called 'df_messi.csv'
     """
-    laliga_matches = FreeMatches(free_comp[free_comp.competition_id == 11].reset_index())
+    free_comp = FreeCompetitions()
+    messi_data = FreeMatches(free_comp[free_comp.competition_id == 11].reset_index())
 
-    # Running this will take about 8-10mins
-    laliga_events = StatsBombFreeEvents(laliga_matches)
+    df_messi = StatsBombFreeEvents(messi_data)
 
-    # Get all the events of a specific player.
-    final = laliga_events[(laliga_events['player.name'] == 'Lionel Andrés Messi Cuccittini')]
+    df_messi.reset_index(inplace=True, drop=True)
 
-    # Below explained. Statsbomb data for the below stats come as a pair ie ([55, 65]) this breaks that one up into 2 for easier reading in future.
+    df_messi['time'] = ( df_messi['minute'] * 60 + df_messi['second'] ) / 60
 
-    # Create column for end_location x and y. For PASSING.
-    final.loc[final['type.name'] == 'Pass','end_location_x'] = [x[0] for x in final[final['type.name'] == 'Pass']['pass.end_location']]
-    final.loc[final['type.name'] == 'Pass', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Pass']['pass.end_location']]
+    df_messi[df_messi['location'].notnull()].head()
 
-    # Create column for end_location x and y. For CARRY.
-    final.loc[final['type.name'] == 'Carry', 'end_location_x'] = [x[0] for x in final[final['type.name'] == 'Carry' ]['carry.end_location']]
-    final.loc[final['type.name'] == 'Carry', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Carry']['carry.end_location']]
+    # Create column for location_x, location_y
+    df_messi.loc[df_messi['location'].notnull(), 'location_x'] = [x[0] for x in df_messi[df_messi['location'].notnull()]['location']]
+    df_messi.loc[df_messi['location'].notnull(), 'location_y'] = [x[1] for x in df_messi[df_messi['location'].notnull()]['location']]
 
-    # Create column for end_location x and y. For SHOT.
-    final.loc[final['type.name'] == 'Shot', 'end_location_x'] = [x[0] for x in final[final['type.name'] == 'Shot' ]['shot.end_location']]
-    final.loc[final['type.name'] == 'Shot', 'end_location_y'] = [x[1] for x in final[final['type.name'] == 'Shot']['shot.end_location']]
+    # Create column for end_location
+    # For pass
+    df_messi.loc[df_messi['type.name'] == 'Pass', 'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Pass' ]['pass.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Pass', 'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Pass' ]['pass.end_location']]
 
-    # Drop those column now that we have moved the data elsewhere.
-    final.drop(['location', 'pass.end_location','carry.end_location', 'shot.end_location'], axis=1, inplace=True)
+    # For carry                                
+    df_messi.loc[df_messi['type.name'] == 'Carry', 'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Carry' ]['carry.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Carry', 'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Carry' ]['carry.end_location']]
+                                                    
+    # For Shot
+    df_messi.loc[df_messi['type.name'] == 'Shot', 'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Shot' ]['shot.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Shot', 'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Shot' ]['shot.end_location']]
+                                                    
+    df_messi.drop(['location', 'pass.end_location','carry.end_location', 'shot.end_location'], axis=1, inplace=True)
+    
+    df_messi.to_csv('df_messi.csv')
 
+all_events()
 
-    final.to_csv('messi_events.csv')
         
     

@@ -10,7 +10,7 @@ messi_name = 'Lionel Andrés Messi Cuccittini'
 
 laliga_id = 11
 
-messi_csv_file = 'messi_events.csv'
+messi_csv_file = 'df_messi.csv'
 
 def calculate_pass_map(season_id = 21, highest = False):
     """
@@ -52,8 +52,6 @@ def calculate_pass_map(season_id = 21, highest = False):
                 color = 'lightgreen'
             else:
                 color = 'seagreen'
-        
-        print(row['end_location_x'], row['end_location_y'])
         ax.arrow(row['location_x'], row['location_y'], row['end_location_x'] - row['location_x'], row['end_location_y'] - row['location_y'], 
             color=color, linewidth=1.5, head_width=1.5, length_includes_head=True)
 

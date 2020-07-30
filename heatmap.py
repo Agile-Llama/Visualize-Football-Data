@@ -12,7 +12,7 @@ messi_name = 'Lionel Andrés Messi Cuccittini'
 
 laliga_id = 11
 
-messi_csv_file = 'messi_events.csv'
+messi_csv_file = 'df_messi.csv'
 
 
 def lowest_xG_game(season_id = 21):
@@ -44,7 +44,8 @@ def lowest_xG_game(season_id = 21):
     fig.set_size_inches(12, 8)
     draw_field(ax, heatmap=True)
 
-    data_from_lowest_xg_game = df_messi[(df_messi['match_id'] == match_id_lowest_xG_game) & (df_messi['player.name'] == messi_name) & (~df_messi['location_x'].isnull()) & (~df_messi['location_y'].isnull())]
+    data_from_lowest_xg_game = df_messi[(df_messi['match_id'] == match_id_lowest_xG_game) & (df_messi['player.name'] == messi_name) &
+         (~df_messi['location_x'].isnull()) & (~df_messi['location_y'].isnull())]
 
     sigma = 50
 
@@ -110,7 +111,7 @@ if __name__ == '__main__':
     # season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
     
     # for i in season_ids:
-    #    lowest_xG_game(i)
+    lowest_xG_game(4)
     #    highest_xG_game(i)
 
     print('Nothing selected..')

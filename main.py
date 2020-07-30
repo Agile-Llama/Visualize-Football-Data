@@ -1,69 +1,69 @@
 # Stats from StatsBomb free datasets
 
-from data_functions import FreeCompetitions, FreeMatches
+from data_functions import FreeCompetitions, FreeMatches, StatsBombFreeEvents
 import pandas as pd
-
-# Refer to page 19 of Open events for guide on shots.
-# Types of shot:
-    # 61 / “Corner”
-    # 62 / “Free Kick” 
-    # 87 / “Open Play” 
-    # 88 / “Penalty” 
-    # 65 / “Kick Off”
-
-# Outcome of shot (shot.end_location)
-    # 96 / “Blocked”
-    # 97 / “Goal” 
-    # 98 / “OffT” 
-    # 99 / “Post”
-    # 100 / “Saved”
-    # 115 / “Saved Off T” 
-    # 116 / “Saved To Post”
-
-# Refer to page 18 and page 2 for info.
-# end_location Where the shot ended.
-    # can have x,y or x,y,z values.
-
-
-# Shot numbers which I care about currently are:
-    # 62 for free kicks.
-    # 88 for penalties
 
 # Full name
 messi_name = 'Lionel Andrés Messi Cuccittini'
 
 laliga_id = 11
 
-messi_csv_file = 'messi_events.csv'
+file_to_load = 'df_messi'
 
-laliga_csv_file = 'laliga_events.csv'
+# Post process the dataframe. Add and remove columns to streamline for later functions.
+# Call this after creating the respective CSV file.
+def post_process():
 
+    free_comp = FreeCompetitions()
+    messi_data = FreeMatches(free_comp[free_comp.competition_id == 11].reset_index())
 
-# Currently only concerned with Messi stats. 
-# Can expand later.
-def main():
-    # Load the csv file which has all the data pre processed
-    df_messi = pd.read_csv(messi_csv_file, index_col=0, low_memory=False)
+    df_messi = StatsBombFreeEvents(messi_data)
 
-    # Get all the goals that messi has scored. 
-    # goals_by_game = df_messi[(df_messi['shot.outcome.name'] == 'Goal') & (df_messi['player.name'] == messi_name)].groupby('match_id')['player.name'].count()
+    df_messi.reset_index(inplace=True, drop=True)
 
-    # Get all the pens scored.
-    pens_scored = df_messi[(df_messi['shot.type.name'] == 'Penalty') & (df_messi['player.name'] == messi_name) & (df_messi['shot.outcome.name'] == 'Goal')]
+    df_messi['time'] = ( df_messi['minute'] * 60 + df_messi['second'] ) / 60
 
-    # All free kicks taken by Messi
-    all_free_kicks = df_messi[(df_messi['shot.type.name'] == 'Free Kick') & (df_messi['player.name'] == messi_name)]
+    df_messi[df_messi['location'].notnull()].head()
 
-    free_kicks_blocked = all_free_kicks[(df_messi['shot.outcome.name'] == 'Blocked')]
+    # Create column for location_x, location_y
+    df_messi.loc[df_messi['location'].notnull(),
+              'location_x'] = [x[0] for x in df_messi[df_messi['location'].notnull()]['location']]
+    df_messi.loc[df_messi['location'].notnull(),
+              'location_y'] = [x[1] for x in df_messi[df_messi['location'].notnull()]['location']]
 
-    pd.set_option('display.max_rows', df_messi.shape[0]+1)
-
-    print(free_kicks_blocked)
-
+    # Create column for end_location
+    # For pass
+    df_messi.loc[df_messi['type.name'] == 'Pass',
+             'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Pass'
+                                                                 ]['pass.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Pass',
+             'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Pass'
+                                                                 ]['pass.end_location']]
+                                            
+    df_messi.loc[df_messi['type.name'] == 'Carry',
+             'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Carry'
+                                                                 ]['carry.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Carry',
+             'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Carry'
+                                                                  ]['carry.end_location']]
+                                                    
+    # For Shot
+    df_messi.loc[df_messi['type.name'] == 'Shot',
+             'end_location_x'] = [x[0] for x in df_messi[df_messi['type.name'] == 'Shot'
+                                                                 ]['shot.end_location']]
+    df_messi.loc[df_messi['type.name'] == 'Shot',
+             'end_location_y'] = [x[1] for x in df_messi[df_messi['type.name'] == 'Shot'
+                                                                 ]['shot.end_location']]
+                                                    
+    df_messi.drop(['location', 'pass.end_location','carry.end_location', 'shot.end_location'],
+              axis=1,
+              inplace=True)
+    
+    df_messi.to_csv('df_messi.csv')
 
 
 if __name__ == '__main__':
-    main()
+    post_process()
 
 
 

@@ -162,6 +162,8 @@ def minutes_played(dataframe, match_id, player_name, team_name):
             minutes_played (float) : Number of minutes played by a given player.
 
     """
+    # Create a col for time in the dataframe.
+    dataframe['time'] = (dataframe['minute'] * 60 + dataframe['second'] ) / 60
 
     # Get the lineup for the match_id
     lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) &(dataframe['team.name'] == team_name) 

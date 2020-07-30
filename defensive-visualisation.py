@@ -11,7 +11,7 @@ messi_name = 'Lionel Andrés Messi Cuccittini'
 
 laliga_id = 11
 
-messi_csv_file = 'messi_events.csv'
+messi_csv_file = 'df_messi.csv'
 
 # This file should be used alongside heatmap.py. Contrast the strength of the defence with how well a player (probs Messi) played.
 

@@ -72,7 +72,7 @@ def calculate_carry_map(season_id = 21, highest = False):
     # Annotate on the pitch the final third. Passes into the final third generally have lower success rate.
     plt.text(80, 83, "<---------------   Final Third    -------------->", {'color': 'grey', 'fontsize': 12})
 
-    ax.set_title("Carrymap of Lionel Messi", loc='left')
+    ax.set_title("Carry map of Lionel Messi", loc='left')
 
     ax.annotate(f"Match Id: %d Season Id: %d" % (match_id, season_id), xy=(90, -2))
 

@@ -15,7 +15,7 @@ messi_csv_file = 'df_messi.csv'
 
 def calculate_pass_map(season_id = 21, highest = False):
     """
-    Must have the columns 'end_location_x and end_location_y.
+    Must have the columns 'end_location_x and end_location_y. (For pass)
     Function which creates a passmap for Lionel Messi for the lowest or highest expected goal game in a given season.
 
     There are 4 possible pass types. Each represented by different colours:
@@ -28,7 +28,6 @@ def calculate_pass_map(season_id = 21, highest = False):
     Args:
         season_id(int): Season in which to get the lowest Expected Goal game.
         highest(bool): If True want the game with the game with the HIGHEST Expected Goals.
-
 
     """
     df_messi = pd.read_csv(messi_csv_file, index_col=0, low_memory=False)
@@ -105,8 +104,9 @@ def calculate_pass_map(season_id = 21, highest = False):
         
 
 if __name__ == '__main__':
-    season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
-    for i in tqdm(season_ids):
-        calculate_pass_map(i, highest=True)
-        calculate_pass_map(i, highest=False)
+    #season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
+    # for i in tqdm(season_ids):
+    #   calculate_pass_map(i, highest=True)
+    #    calculate_pass_map(i, highest=False)
+    print('Nothing called..')
     

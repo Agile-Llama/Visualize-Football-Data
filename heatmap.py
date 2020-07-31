@@ -111,8 +111,8 @@ if __name__ == '__main__':
     # season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
     
     # for i in season_ids:
-    lowest_xG_game(4)
-    #    highest_xG_game(i)
+    #   lowest_xG_game(4)
+    #   highest_xG_game(i)
 
     print('Nothing selected..')
 

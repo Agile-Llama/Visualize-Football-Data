@@ -9,7 +9,15 @@ import requests
 
 # Github root url for statsbomb data.
 stats_bomb_url = 'https://raw.githubusercontent.com/statsbomb/open-data/master/data/'
-data_folder = '/Users/agilellama/Desktop/Free-Kick-Visualization/Data/Lineups'
+
+# Folder in which to save lineup json file.
+data_folder = '/Users/agilellama/Desktop/Free-Kick-Visualization/Data/Lineups/'
+
+messi_name = 'Lionel Andrés Messi Cuccittini'
+
+laliga_id = 11
+
+messi_csv_file = 'df_messi.csv'
 
 def draw_passing_network(ax, dataframe, match_id, team_name, min_time=0, max_time=None):
     """
@@ -30,7 +38,10 @@ def draw_passing_network(ax, dataframe, match_id, team_name, min_time=0, max_tim
     """
 
     # Whoever is in the starting lineup of the team will be on the passing network.
-    starting_lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) & (dataframe['type.name'] == 'Starting XI') & (dataframe['team.name'] == team_name) ]['tactics.lineup'].values[0])
+    starting_lineup = literal_eval(dataframe[(dataframe['match_id'] == match_id) &
+                             (dataframe['type.name'] == 'Starting XI') &
+                             (dataframe['team.name'] == team_name)
+                             ]['tactics.lineup'].values[0])
     
     if max_time is None:
         # Get number of played minutes for this game for each player
@@ -49,12 +60,12 @@ def draw_passing_network(ax, dataframe, match_id, team_name, min_time=0, max_tim
     
     # Get the lineups and save the json file into the 'Data' folder. Used to get the nicknames of the players.
     dataframe = get_lineups(match_id)
-    dataframe.to_json(data_folder+'{match_id}.json', orient='records', lines=True)
+    dataframe.to_json('%s%s.json' % (data_folder, match_id), orient='records', lines=True)
 
-    with open(data_folder+'{match_id}.json', encoding='utf-8') as json_file:
-        lineup_file = json.load(json_file)
+    #with open(data_folder+'{match_id}.json', encoding='utf-8') as json_file:
+    #    lineup_file = json.load(json_file)
     
-    names_nickames = {player["player_name"]: player["player_nickname"] for team in lineup_file for player in team['lineup']}
+    #names_nickames = {player["player_name"]: player["player_nickname"] for team in lineup_file for player in team['lineup']}
 
 
 def start(season_id, highest=False):
@@ -72,6 +83,9 @@ def start(season_id, highest=False):
         index_min_xg = xG_per_90_game.argmax()
     else:
         index_min_xg = xG_per_90_game.argmin()
+    
+    # The match id of the game with the lowest/highest xG.
+    match_id = xG_per_90_game.index[index_min_xg]
 
     fig = plt.figure()
     ax = fig.add_subplot()

@@ -2,20 +2,24 @@ Using public statsbomb dataset. This dataset can be found here https://github.co
 
 The dataset includes matches from many compeitions including the womens world cup. Im focusing on the data which feature on Lionel Messi.
 
+For the passing_network.py file. Inspired by https://github.com/Friends-of-Tracking-Data-FoTD/passing-networks-in-python 
+See visualization/passing_network.py for the source.
+
 Functions:
+Using the same game. Specifally season 1 with the match id of 9860.
 
-    load_data.py - Call the function 'all_events()' to get a csv file with all the data which is required for all other functions. File name is 'df_messi.csv'
+heatmap.py
+![Image of Heatmap]
+(Heatmaps/Highest_xG/S1_Messi_Heatmap_Highest_xG.png)
 
-    data_functions.py - Has a bunch of useful functions which other files use. Never really need to interact with it directly. 
+passmap.py
+![Image of Passmap]
+(Passmaps/Highest_xG/S1_Messi_Passmap_Highest_xG.png)
 
-    heatmap.py - Creates a heatmap for a given season. Only for Lionel Messi atm. (Either highest/lowest Expected goal game)
-        -Saves into Heatmaps/Lowest_xG or Heatmaps/Highest_xG
+carrymap.py
+![Image of Passmap]
+(Cassmaps/Highest_xG/S1_Messi_Carrymap_Highest_xG.png)
 
-    passmap.py - Creates a passmap for a given season. Only for Lionel Messi atm. (Either highest/lowest Expected goal game)
-        -Saves into Passmaps/Lowest_xG or Passmaps/Highest_xG
 
-    defensive_visualisation.py - Currently not working. Idea is to get average of all defence accross a season then checks a specific game to see if its greater or less than the mean defence. Then create a defensive pressure map.
 
-df_messi.csv - Can be generated through functions provided(load_data.py). However, the file is provided in this repo. About 700mb download though.
 
-Passmap/heatmap images for all seasons in their respective folders.

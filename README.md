@@ -9,16 +9,13 @@ Functions:
 Using the same game. Specifally season 1 with the match id of 9860.
 
 heatmap.py
-![Image of Heatmap]
-(Heatmaps/Highest_xG/S1_Messi_Heatmap_Highest_xG.png)
+![Image of Heatmap](Heatmaps/Highest_xG/S1_Messi_Heatmap_Highest_xG.png)
 
 passmap.py
-![Image of Passmap]
-(Passmaps/Highest_xG/S1_Messi_Passmap_Highest_xG.png)
+![Image of Passmap](Passmaps/Highest_xG/S1_Messi_Passmap_Highest_xG.png)
 
 carrymap.py
-![Image of Passmap]
-(Cassmaps/Highest_xG/S1_Messi_Carrymap_Highest_xG.png)
+![Image of Passmap](Cassmaps/Highest_xG/S1_Messi_Carrymap_Highest_xG.png)
 
 
 

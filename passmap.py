@@ -70,6 +70,9 @@ def calculate_pass_map(season_id = 21, highest = False):
                 color = 'royalblue'
             else:
                 color = 'cyan'
+        
+        if row['pass.goal_assist'] == True:
+            color = 'black'
     
         # Draw the arrow on the field. The colour depends on the varaibles above. 
         # Note zorder is set to 2. This is to put it on top of the green field and the lines.
@@ -82,8 +85,10 @@ def calculate_pass_map(season_id = 21, highest = False):
     green_patch = matplotlib.patches.Rectangle((0, 0), 0, 0, color = 'cyan')
     red_patch = matplotlib.patches.Rectangle((0, 0), 0, 0, color = 'firebrick')
 
+    assist_patch = matplotlib.patches.Rectangle((0, 0), 0, 0, color = 'black')
+
     # Add the legend for the pitch. There are 4 colours which all represent a specific type of pass.
-    leg = ax.legend([green_patch_up, green_patch, red_patch_up, red_patch], ['Complete - under pressure', 'Complete - no pressure',
+    leg = ax.legend([assist_patch, green_patch_up, green_patch, red_patch_up, red_patch], ['Assist', 'Complete - under pressure', 'Complete - no pressure',
         'Incomplete - under pressure', 'Incomplete - no pressure'], loc='upper right', bbox_to_anchor = (1, 1.1), fontsize=12, ncol=2)
 
     plt.plot([80, 80], [0, 80], color='grey', linewidth=2, linestyle='--' )
@@ -93,20 +98,20 @@ def calculate_pass_map(season_id = 21, highest = False):
 
     ax.set_title("Passmap of Lionel Messi", loc='left')
 
-    ax.annotate(f"Match Id: %d Season Id: %d" % (match_id, season_id), xy=(90, -2))
+    ax.annotate(f"Match Id: %d Season Id: %d" % (match_id, season_id), xy=(90, -2), zorder=3)
 
     # ax.annotate("Direction of play for Barcelona", xy=(5, 83), xytext=(60, 84), arrowprops=dict(arrowstyle="->", edgecolor='k', linewidth=1.5), color='k')
 
     if highest:
-        fig.savefig('Passmaps/Highest_xG/S%d_Messi_Passmap_Highest_xG.png' % (season_id))
+        fig.savefig('Passmaps/Highest_xG/Assists/S%d_Messi_Passmap_Highest_xG_goals.png' % (season_id))
     else:
-        fig.savefig('Passmaps/Lowest_xG/S%d_Messi_Passmap_Lowest_xG.png' % (season_id))
+        fig.savefig('Passmaps/Lowest_xG/Assists/S%d_Messi_Passmap_Lowest_xG_goals.png' % (season_id))
         
 
 if __name__ == '__main__':
-    #season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
-    # for i in tqdm(season_ids):
-    #   calculate_pass_map(i, highest=True)
-    #    calculate_pass_map(i, highest=False)
-    print('Nothing called..')
+    season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
+    for i in tqdm(season_ids):
+        calculate_pass_map(i, highest=True)
+        calculate_pass_map(i, highest=False)
+    # print('Nothing called..')
     

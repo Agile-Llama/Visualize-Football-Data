@@ -116,11 +116,10 @@ def get_lineups(match_id):
 
     """
 
-    events_url = stats_bomb_url+"lineups/{match_id}.json"
-    events_api = requests.get(url=events_url)
-    events_api.encoding = 'utf-8'
-    events = pd.DataFrame(json_normalize(events_api.json(), 'lineup', ['team_id', 'team_name']))
-    
+    events_url = stats_bomb_url + f"lineups/{match_id}.json"
+    raw_events_api = requests.get(url=events_url)
+    raw_events_api.encoding = 'utf-8'
+    events = pd.DataFrame(json_normalize(raw_events_api.json(), 'lineup', ['team_id', 'team_name']))
     events.loc[:, 'match_id'] = match_id
 
     return events

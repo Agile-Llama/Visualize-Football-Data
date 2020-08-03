@@ -87,7 +87,7 @@ So far i've only shown games which Lionel Messi has done well in (higher xG). Fr
 
 The following images are games where Messi had his lowest xG game of the particular season. 
 
-![img](Heatmaps/lowest_xG/S21_Messi_Heatmap_Lowest_xG.png)
+![img](Heatmaps/Highest_xG/S21_Messi_Heatmap_Highest_xG.png)
 Most notable difference about the heat maps is how Messi is pushed out wider. This could be a symptom of the formation used, or could be due to the pressure in which the opponent put on him. 
 
 ![img](Passmaps/Lowest_xG/S21_Messi_Passmap_Lowest_xG.png)

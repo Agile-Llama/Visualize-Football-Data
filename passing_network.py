@@ -59,15 +59,19 @@ def draw_passing_network(ax, dataframe, match_id, team_name, min_time=0, max_tim
         (dataframe['team.name'] == team_name) & (dataframe['time'] >= min_time) & (dataframe['time'] <= max_time)].copy()
     
     # Get the lineups and save the json file into the 'Data' folder. Used to get the nicknames of the players.
-    dataframe = get_lineups(match_id)
-    dataframe.to_json('%s%s.json' % (data_folder, match_id), orient='records', lines=True)
+    lineup_df = get_lineups(match_id)
+    # lineup_df.to_json('%s%s.json' % (data_folder, match_id), orient='columns')
 
-    #with open(data_folder+'{match_id}.json', encoding='utf-8') as json_file:
-    #    lineup_file = json.load(json_file)
+    # with open('/Users/agilellama/Desktop/Free-Kick-Visualization/Data/Lineups/15956.json', encoding='utf-8') as json_file:
+    #     lineup_file = json.load(json_file)
+
+    # names_nickames = {player["player_name"]: player["player_nickname"] for team in lineup_file for player in team['lineup'].values()}
+
+    # Look at inspiration github code to see if more obvious
+
     
-    #names_nickames = {player["player_name"]: player["player_nickname"] for team in lineup_file for player in team['lineup']}
 
-
+# Loads the highest/lowest xG game. Then calls the draw_passing_network function.
 def start(season_id, highest=False):
     df_messi = pd.read_csv('df_messi.csv', index_col=0, low_memory=False)
     match_id = df_messi[df_messi['season_id'] == season_id]['match_id'].values

@@ -18,7 +18,7 @@ messi_csv_file = 'df_messi.csv'
 def lowest_xG_game(season_id = 21):
     """
         Function that gets the lowest Expected Goals game in Lionel Messi's career.
-         A heatmap is created and saved to the the directory of Heatmaps/Lowest_xG as 'messi_heatmap_lowest_xG.png'
+        A heatmap is created and saved to the the directory of Heatmaps/Lowest_xG as 'messi_heatmap_lowest_xG.png'
 
     """
 
@@ -102,17 +102,16 @@ def highest_xG_game(season_id = 4):
 
     ax.annotate(f"Match Id: %d Season Id: %d" % (match_id_highest_xG_game, season_id), xy=(90, -5))
 
-    # ax.annotate("Direction of play for Barcelona", xy=(5, 83), xytext=(60, 84), arrowprops=dict(arrowstyle="->", edgecolor='k', linewidth=1.5), color='k')
+    ax.annotate("Direction of play for Barcelona", xy=(5, 83), xytext=(60, 84), arrowprops=dict(arrowstyle="->", edgecolor='k', linewidth=1.5), color='k')
 
     fig.savefig('Heatmaps/Highest_xG/S%d_Messi_Heatmap_Highest_xG.png' % (season_id))
 
    
 if __name__ == '__main__':
-    # season_ids = [4, 1, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
-    
-    # for i in season_ids:
-    #   lowest_xG_game(4)
-    #   highest_xG_game(i)
+    season_ids = [4, 2, 27, 26, 25, 24, 23, 22, 21, 41, 40, 39, 38, 37]
+    for i in season_ids:
+       lowest_xG_game(i)
+       highest_xG_game(i)
 
     print('Nothing selected..')
 

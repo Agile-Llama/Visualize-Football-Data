@@ -37,7 +37,7 @@ https://www.transfermarkt.com/lionel-messi/elfmetertore/spieler/28003
 
 ## What can you do?
 
-### 1. Get Game Events
+### Get Game Events
 - Inside the load_data.py script call the function all_events()  
   - This will return a csv file of all the events from all laliga seasons. 
   - csv file is saved in the working directory and is named 'df_messi'
@@ -50,7 +50,9 @@ https://www.transfermarkt.com/lionel-messi/elfmetertore/spieler/28003
 
 For all other attributes contained within the csv file see the statsbomb docs which are located in the root directory under 'Open Data Events V4.0.0.pdf'
 
-### 2. Heat Map
+## Looking into pressure and performance.
+
+#### 1. Heat Map (High xG)
 Currently the only options avaiable are either the lowest of highest expected goal game in a given season.  
 
 Heat maps in Sport are used to identify the frequency of events spread in a given particular area.   
@@ -60,7 +62,7 @@ The map gets heated up in areas where the player has had more control of the bal
 
 In the above image we can see that Lionel Messi spent the majority of his time in the false 9 position in the opponents half. This tracks as the game is one where he had the highest expected goals of that prticular season. 
 
-### 3. Pass Map (Basic)
+#### 2. Pass Map (Basic) (High xG)
 
 There a couple types of pass maps used in football. The more advanced one is furthur down this repository.  
 The basic pass map just shows the x and y starting position and the x and y finishing position of a pass. Furthur information is given, whether the pass was incomplete, complete, underpressure or no pressure. 
@@ -70,6 +72,35 @@ The basic pass map just shows the x and y starting position and the x and y fini
 - Note the flipped perspective of the above image. 
 
 If we compare this pass map to the heat map above we can see the positions where Lionel Messi was most of the game was where the majority of his passes were. Not a particularly revolutionary discover. 
+
+#### 3. Carry Map (High xG)
+A carry in football is also known as a dribble. Apart from passing this is the other way to progress the ball.
+A carry map is very similiar in concept to a pass map. It has the starting position (x, y) and the ending position of the carry. 
+
+![img](Carrymaps/Highest_xG/S1_Messi_Carrymap_Highest_xG.png)
+
+Much like the other 2 images we can see that messi spent the majority of his time around the false 9 position.
+
+#### 4. Comparison between high and low xG games. 
+
+So far i've only shown games which Lionel Messi has done well in (higher xG). From the pass map and the carry map we can clearly see that very few his actions had pressure put on him by opponents. The positions in which he did have pressure are those where you would expect, such as entering the opponents box. Generally possession in the opponents final third means there will be more pressure on the player. 
+
+The following images are games where Messi had his lowest xG game of the particular season. 
+
+![img](Heatmaps/lowest_xG/S21_Messi_Heatmap_Lowest_xG.png)
+Most notable difference about the heat maps is how Messi is pushed out wider. This could be a symptom of the formation used, or could be due to the pressure in which the opponent put on him. 
+
+![img](Passmaps/Lowest_xG/S21_Messi_Passmap_Lowest_xG.png)
+The majority of the passes in the final third are incomplete and more passes outside of the final third are passes in which pressure has been put on. 
+
+![img](Carrymaps/Lowest_xG/S21_Messi_Carrymap_Lowest_xG.png)
+Finally we can see that the team which is Messi is playing against is a team which is pressing him. The idea of pressing is to put pressure on the ball with the intention of winning it back off of the opposition. By forcing the opposition to complete an action in a pressured atmosphere, every aspect of that action is made more difficult.  
+
+
+
+
+
+
 
   
 

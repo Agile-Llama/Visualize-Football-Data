@@ -4,6 +4,13 @@ Using statsbomb public dataset. This dataset can be found at https://github.com/
 
 Repo contains scripts to both visualize and get the data from the statsbomb github. Leverage data visualization to statistically analyze and visualize the performance of Lionel Messi. These scripts are written in Python 3 and are intended to be run with it.
 
+### TODO
+- [ ] Finish off passing network function
+- [ ] Finish off function for calculting PPDA statistic for defensive pressure.
+- [ ] Look more into 2011–12 season where he scored 73 goals in all comps.
+- [ ] Train a model to recognize Lionel Messi based off a given set of statistics.
+- [ ] Look into identifying players similiar to Lionel Messi through machine learning classification (KNN?).
+
 ## Getting Started
 
 ### 1. Clone Repo
